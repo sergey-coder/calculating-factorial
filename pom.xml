@@ -9,7 +9,7 @@
 
 	<groupId>korotkov.learn</groupId>
 	<artifactId>calculating-factorial</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -30,10 +30,45 @@
 		<spring.boot.version>2.5.2</spring.boot.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
-		<grpc.version>1.39.0</grpc.version>
+		<grpc.version>1.37.0</grpc.version>
+		<net.devh>2.12.0.RELEASE</net.devh>
 	</properties>
 <dependencies>
-
+	<dependency>
+		<groupId>net.devh</groupId>
+		<artifactId>grpc-server-spring-boot-starter</artifactId>
+		<version>${net.devh}</version>
+	</dependency>
+	<dependency>
+		<groupId>net.devh</groupId>
+		<artifactId>grpc-client-spring-boot-starter</artifactId>
+		<version>${net.devh}</version>
+	</dependency>
+<!--	<dependency>-->
+<!--		<groupId>io.grpc</groupId>-->
+<!--		<artifactId>grpc-netty</artifactId>-->
+<!--		<version>${grpc.version}</version>-->
+<!--	</dependency>-->
+<!--	<dependency>-->
+<!--		<groupId>io.grpc</groupId>-->
+<!--		<artifactId>grpc-protobuf</artifactId>-->
+<!--		<version>${grpc.version}</version>-->
+<!--	</dependency>-->
+<!--	<dependency>-->
+<!--		<groupId>io.grpc</groupId>-->
+<!--		<artifactId>grpc-stub</artifactId>-->
+<!--		<version>${grpc.version}</version>-->
+<!--	</dependency>-->
+<!--	<dependency>-->
+<!--		<groupId>io.grpc</groupId>-->
+<!--		<artifactId>grpc-core</artifactId>-->
+<!--		<version>${grpc.version}</version>-->
+<!--	</dependency>-->
+<!--	<dependency>-->
+<!--		<groupId>io.grpc</groupId>-->
+<!--		<artifactId>grpc-netty-shaded</artifactId>-->
+<!--		<version>${grpc.version}</version>-->
+<!--	</dependency>-->
 </dependencies>
 	<build>
 		<plugins>
@@ -41,6 +76,24 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring.boot.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.xolstice.maven.plugins</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>0.5.0</version>
+				<configuration>
+					<protocArtifact>com.google.protobuf:protoc:3.3.0:exe:${os.detected.classifier}</protocArtifact>
+					<pluginId>grpc-java</pluginId>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:1.4.0:exe:${os.detected.classifier}</pluginArtifact>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>compile-custom</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

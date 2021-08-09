@@ -1,8 +1,9 @@
 package ru.grpc;
 
 import ru.model.CalculatingRequest;
+import ru.model.TypeEvent;
 
 public interface GrpcService {
 
-    void sendGrpcRequest(CalculatingRequest calculatingRequest);
+    void sendGrpcRequest(TypeEvent typeEvent, CalculatingRequest calculatingRequest);
 }

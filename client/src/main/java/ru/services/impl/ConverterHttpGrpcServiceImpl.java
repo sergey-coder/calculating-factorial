@@ -1,49 +1,50 @@
 package ru.services.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import ru.grpc.GrpcService;
 import ru.model.CalculatingRequest;
+import ru.model.TypeEvent;
 import ru.services.ConverterHttpGrpcService;
 
 @Service
 public class ConverterHttpGrpcServiceImpl implements ConverterHttpGrpcService {
+    private final GrpcService grpcService;
+
+    public ConverterHttpGrpcServiceImpl(@Autowired GrpcService grpcService) {
+        this.grpcService = grpcService;
+    }
 
     /**
-     *  Преобразует HTTP запрос в grpc
-     *  Механизм отправки на end point сервера еще не определен
+     *  Определяет тип события START,
+     *  передает данные для отправки запроса gRPC.
      */
     @Override
     public void sendRequest(CalculatingRequest calculatingRequest) {
         checkZeroNegativeNumber(calculatingRequest.getNumber(),
                                 calculatingRequest.getTreads());
-        // TODO
+
+        grpcService.sendGrpcRequest(TypeEvent.START, calculatingRequest);
     }
 
     /**
-     * Отправляет некий event на сервер с целью остановки вычесления
-     * передаем id вычесления
+     * Определяет тип события STOP,
+     * передает данные для отправки запроса gRPC.
      */
     @Override
     public void stopCalculat(CalculatingRequest calculatingRequest) {
-        //TODO
+        grpcService.sendGrpcRequest(TypeEvent.STOP, calculatingRequest);
     }
 
     /**
-     * Отправляет некий event на сервер с целью получения информации
-     * о текущем состоянии вычесления по его id
+     * Определяет тип события GET_STATUS,
+     * передает данные для отправки запроса gRPC.
      */
     @Override
     public void getCalculatStatus(CalculatingRequest calculatingRequest) {
-        //TODO
-    }
-
-    /**
-     * Билдер запроса в gRPC
-     */
-    private Object getIdRequest(){
-        //TODO
-        return 0;
+        grpcService.sendGrpcRequest(TypeEvent.GET_STATUS, calculatingRequest);
     }
 
     /**

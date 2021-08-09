@@ -13,7 +13,7 @@ import ru.services.ConverterHttpGrpcService;
  * Все запросы от пользователя должены передаваться через rest в формате json
  */
 @RestController
-@RequestMapping(value = "/api/converter", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/api/converter"/*, consumes = "application/json", produces = "application/json"*/)
 public class ConverterController {
 
     ConverterHttpGrpcService service;
