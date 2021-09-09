@@ -1,4 +1,4 @@
-package ru.services;
+package ru.calculate;
 
 
 import org.springframework.stereotype.Component;
@@ -29,18 +29,24 @@ public class Calculate {
      */
     private BigInteger result = BigInteger.ONE;
 
-    public void calculatingFactorial(int startedNumber){
-        while (!stopCalculate || iteratorCalculat <= startedNumber){
+    public BigInteger calculatingFactorial(int startedNumber){
+        while (!stopCalculate && iteratorCalculat <= startedNumber){
             result = result.multiply(BigInteger.valueOf(iteratorCalculat));
             iteratorCalculat++;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         stopCalculate = true;
+        return result;
     }
 
     /**
      * Выдает текущий статус вычеслений
      */
-    public Boolean getStopCalculate() {
+    public Boolean getStatusCalculate() {
         return stopCalculate;
     }
 
@@ -54,7 +60,7 @@ public class Calculate {
     /**
      * Выдает текущий результат вычеслений
      */
-    public BigInteger getResult() {
+    public BigInteger getСurrentResult() {
         return result;
     }
 }

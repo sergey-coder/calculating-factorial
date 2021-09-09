@@ -1,9 +1,20 @@
 package ru.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.model.CalculatingRequest;
-import ru.services.ConverterHttpGrpcService;
+import ru.model.CalculatingRespons;
+import ru.services.http.ConverterHttpGrpcService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * Контроллер для приема HTTP запросов от пользователя
@@ -13,10 +24,12 @@ import ru.services.ConverterHttpGrpcService;
  * Все запросы от пользователя должены передаваться через rest в формате json
  */
 @RestController
-@RequestMapping(value = "/api/converter"/*, consumes = "application/json", produces = "application/json"*/)
+@RequestMapping(value = "**/api/converter", consumes = "application/json", produces = "application/json")
 public class ConverterController {
 
-    ConverterHttpGrpcService service;
+    private static Logger logger = LoggerFactory.getLogger(ConverterController.class);
+
+    private final ConverterHttpGrpcService service;
 
     public ConverterController(@Autowired ConverterHttpGrpcService service) {
         this.service = service;
@@ -28,16 +41,24 @@ public class ConverterController {
      * Integer treads Количество потоков
      */
     @PostMapping
-    public void requestCalculating(@RequestBody CalculatingRequest calculatingRequest){
-         service.sendRequest(calculatingRequest);
+    public void requestStartCalculating(@RequestBody CalculatingRequest calculatingRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+        printLog(calculatingRequest, "start");
+        //переписан название сета
+        final URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .build()
+                .toUri();
+        calculatingRequest.setUrlRequest(uri.toString());
+        service.startCalculat(calculatingRequest);
     }
 
     /**
      * Принимает Post запрос для остановки ранее запущенного вычесления
      */
     @PostMapping("/stop")
-    public void stopCalculatingId(@RequestBody CalculatingRequest calculatingRequest){
-        service.stopCalculat(calculatingRequest);
+    public CalculatingRespons stopCalculatingId(@RequestBody CalculatingRequest calculatingRequest){
+        printLog(calculatingRequest, "stop");
+        return service.stopCalculat(calculatingRequest);
     }
 
     /**
@@ -50,7 +71,21 @@ public class ConverterController {
      */
     @PostMapping("/status")
     public void getCalculatingStatus(@RequestBody CalculatingRequest calculatingRequest){
+        printLog(calculatingRequest, "status");
         service.getCalculatStatus(calculatingRequest);
+    }
+
+    /**
+     * Принимает Post запрос для возобновления остановленого вычесления по его UD
+     */
+    @PostMapping("/recommence")
+    public void recommenceCalculating(@RequestBody CalculatingRequest calculatingRequest){
+        printLog(calculatingRequest, "recommence");
+        service.recommenceCalculating(calculatingRequest);
+    }
+
+    private void printLog(CalculatingRequest calculatingRequest, String typerequest){
+        logger.info("Поступил HTTP запрос.Тип запроса: " + typerequest);
     }
 
 }
