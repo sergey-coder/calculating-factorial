@@ -1,5 +1,7 @@
 package ru.services.http.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,10 +13,14 @@ import ru.dao.CalculationDao;
 import ru.domain.Calculation;
 import ru.services.GrpcControllerServices;
 import ru.util.UidGenerator;
+import ru.util.WriteToFile;
 
 @Service
-public class GrpcControllerServicesImpl implements GrpcControllerServices {
+public class GrpcControllerServicesImpl implements GrpcControllerServices/*, DisposableBean*/ {
 
+    private static Logger logger = LoggerFactory.getLogger(GrpcControllerServicesImpl.class);
+   /* @Autowired
+    WriteToFile writeToFile;*/
     private final CalculationDao calculationDao;
 
     public GrpcControllerServicesImpl(@Autowired CalculationDao calculationDao) {
@@ -31,11 +37,13 @@ public class GrpcControllerServicesImpl implements GrpcControllerServices {
     public ResponseEvent startEvent(RequestEvent request) {
 
         if (request.getTypeEvent() == RequestEvent.TypeEvent.START) {
-            return startCalculation(request);
+            return startCalculationEvent(request);
         }
 
+        RequestEvent.TypeEvent typeEvent = request.getTypeEvent();
+
         String requestUid = request.getUid();
-        if (!checkUid(requestUid)) {
+        if (typeEvent!=RequestEvent.TypeEvent.RECOMMENCE && !checkUid(requestUid)) {
             return ResponseEvent.newBuilder()
                     .setUid(requestUid)
                     .setMessage("вычисление с данным uid не запущено")
@@ -43,13 +51,10 @@ public class GrpcControllerServicesImpl implements GrpcControllerServices {
                     .build();
         }
 
-        RequestEvent.TypeEvent typeEvent = request.getTypeEvent();
-
         return switch (typeEvent) {
             case STOP -> stopCalculating(requestUid);
             case GET_STATUS -> getStatusCalculating(requestUid);
-           // case RECOMMENCE -> recommenceCalculating(requestUid);
-            case START -> startCalculation(request);
+            case RECOMMENCE -> recommenceCalculating(requestUid);
             case RESULT -> getCurrentResultCalculating(requestUid);
             default -> throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "не известный тип запроса");
         };
@@ -61,27 +66,28 @@ public class GrpcControllerServicesImpl implements GrpcControllerServices {
      * устанавливает статус вычислений на EXECUTING.
      * запускается MenedgThread в отдельном потоке.
      */
-    private ResponseEvent startCalculation(RequestEvent request) {
+    private ResponseEvent startCalculationEvent(RequestEvent request) {
         Calculation calculation = new Calculation();
         calculation.setUid(UidGenerator.generate());
         calculation.setNumber(request.getNumber());
         calculation.setTreads(request.getTreads());
         calculation.setStatusCalculation(ResponseEvent.StatusCalculation.EXECUTING);
 
-       /* localFactorialCalculate = new MenedgThread(calculationDao, calculation);
-        calculation.setMenedgThread(localFactorialCalculate);
-        calculationDao.addNewCalculation(calculation);*/
-        CalculateMainThread calculateMainThread = new CalculateMainThread(calculationDao, calculation);
-        calculation.setCalculateMainThread(calculateMainThread);
-        calculationDao.addNewCalculation(calculation);
-        //Thread thread = new Thread(localFactorialCalculate);
-        Thread thread = new Thread(calculateMainThread);
-        thread.start();
+        startCalculation(calculation);
 
         return ResponseEvent.newBuilder()
                 .setUid(calculation.getUid())
                 .setMessage("вычисления успешно начаты")
                 .build();
+    }
+
+    private void startCalculation(Calculation calculation){
+        CalculateMainThread calculateMainThread = new CalculateMainThread(calculationDao, calculation);
+        calculation.setCalculateMainThread(calculateMainThread);
+        calculationDao.addNewCalculation(calculation);
+
+        Thread thread = new Thread(calculateMainThread);
+        thread.start();
     }
 
     /**
@@ -164,30 +170,22 @@ public class GrpcControllerServicesImpl implements GrpcControllerServices {
     }
 
     /**
-     * Запускает ранее остановленое вычисление - событие RECOMMENCE.
+     * Запускает незаавершенное вычисление после рестарта сервера - событие RECOMMENCE.
      */
-    /*private ResponseEvent recommenceCalculating(String requestUid) {
-        Calculation calculation = calculationDao.findByUid(requestUid);
+    private ResponseEvent recommenceCalculating(String requestUid) {
+        if (WriteToFile.checkCalculation(requestUid)) {
+            startCalculation(WriteToFile.getCalculation(requestUid));
 
-        if (calculation.getStatusCalculation() != ResponseEvent.StatusCalculation.STOPPED) {
             return ResponseEvent.newBuilder()
                     .setUid(requestUid)
-                    .setMessage("вычесления не могут возобновлены")
-                    .setStatus(calculation.getStatusCalculation())
+                    .setMessage("вычесления возобновлены")
                     .build();
         }
-        calculation.setStatusCalculation(ResponseEvent.StatusCalculation.EXECUTING);
-        calculationDao.updateCalculation(calculation);
-        localFactorialCalculate = new FactorialCalculate(calculation, calculationDao);
-        localFactorialCalculate.setIteratorCalculat(calculation.getCurrentIteratorCalculat());
-        Thread thread = new Thread(localFactorialCalculate);
-        thread.start();
-
         return ResponseEvent.newBuilder()
                 .setUid(requestUid)
-                .setMessage("вычесления возобновлены")
+                .setMessage("вычесления не могут возобновлены")
                 .build();
-    }*/
+    }
 
     /**
      * Проверяет, имеется ли запись о вычислении с данным Uid.
@@ -197,4 +195,5 @@ public class GrpcControllerServicesImpl implements GrpcControllerServices {
     private boolean checkUid(String requestUid) {
         return calculationDao.checkCalculationUid(requestUid);
     }
+
 }

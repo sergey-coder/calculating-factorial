@@ -13,11 +13,17 @@ public class Calculation {
     private String resultCalculation = "результат вычислений еще не определен";
     private int number;
     private int treads;
-    private int currentIteratorCalculat;
     private CalculateMainThread calculateMainThread;
 
     public String getUid() {
         return uid;
+    }
+
+    @Override
+    public String toString() {
+        return  uid +
+                "," + number +
+                "," + treads;
     }
 
     public void setUid(String uid) {
@@ -54,14 +60,6 @@ public class Calculation {
 
     public void setTreads(int treads) {
         this.treads = treads;
-    }
-
-    public int getCurrentIteratorCalculat() {
-        return currentIteratorCalculat;
-    }
-
-    public void setCurrentIteratorCalculat(int currentIteratorCalculat) {
-        this.currentIteratorCalculat = currentIteratorCalculat;
     }
 
     public CalculateMainThread getCalculateMainThread() {

@@ -1,13 +1,20 @@
 package ru.calculate.concurrent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.ResponseEvent;
 import ru.dao.CalculationDao;
 import ru.domain.Calculation;
+import ru.services.http.impl.GrpcControllerServicesImpl;
+import ru.util.WriteToFile;
 
 import java.math.BigInteger;
-import java.util.concurrent.*;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
-public class CalculateMainThread implements Runnable{
+public class CalculateMainThread implements Runnable {
+
+    private static Logger logger = LoggerFactory.getLogger(CalculateMainThread.class);
 
     private CalculationDao calculationDao;
     private Calculation calculation;
@@ -34,6 +41,7 @@ public class CalculateMainThread implements Runnable{
     }
 
     private void startCalculation(){
+        WriteToFile.saveDataCalculating(calculation);
         TaskCalculation taskCalculation = new TaskCalculation(1, calculation.getNumber());
         forkJoinPool = new ForkJoinPool(calculation.getTreads());
         finishResult = forkJoinPool.invoke(taskCalculation);
@@ -43,6 +51,8 @@ public class CalculateMainThread implements Runnable{
         calculation.setResultCalculation(finishResult.toString());
         calculation.setStatusCalculation(ResponseEvent.StatusCalculation.FINISHED);
         calculationDao.updateCalculation(calculation);
+        WriteToFile.deleteDataCalculating(calculation.getUid());
+        logger.info("вычисления с uid " + calculation.getUid() + " окончены" );
     }
 
     private class TaskCalculation extends RecursiveTask<BigInteger> {
@@ -61,10 +71,9 @@ public class CalculateMainThread implements Runnable{
                 BigInteger currentResult = BigInteger.ONE;
                 while (startNumber <= finishNumber) {
                     currentResult = currentResult.multiply(BigInteger.valueOf(startNumber));
-                    System.out.println("текущий результ " + currentResult);
                     startNumber++;
                     try {
-                        Thread.sleep(10000 );
+                        Thread.sleep(10000  );
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
