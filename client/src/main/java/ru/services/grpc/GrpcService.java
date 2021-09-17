@@ -1,4 +1,4 @@
-package ru.grpc;
+package ru.services.grpc;
 
 import ru.model.CalculatingRequest;
 import ru.model.CalculatingRespons;
@@ -8,5 +8,4 @@ public interface GrpcService {
 
     CalculatingRespons sendGrpcRequest(TypeEvent typeEvent, CalculatingRequest calculatingRequest);
 
-    void beginProcessingCalculation(CalculatingRequest calculatingRequest);
 }

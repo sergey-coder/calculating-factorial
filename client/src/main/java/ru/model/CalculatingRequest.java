@@ -11,17 +11,13 @@ public class CalculatingRequest {
 
     private String uid;
 
-    private Boolean statusCalculating;
-
-    private String urlRequest;
-
     public CalculatingRequest(Integer number, Integer treads) {
         this.number = number;
         this.treads = treads;
-        this.statusCalculating = false;
     }
 
-    public CalculatingRequest() {}
+    public CalculatingRequest() {
+    }
 
     public Integer getNumber() {
         return number;
@@ -39,28 +35,12 @@ public class CalculatingRequest {
         this.treads = treads;
     }
 
-    public Boolean getStatusCalculating() {
-        return statusCalculating;
-    }
-
-    public void setStatusCalculating(Boolean statusCalculating) {
-        this.statusCalculating = statusCalculating;
-    }
-
     public String getUid() {
         return uid;
     }
 
     public void setUid(String uid) {
         this.uid = uid;
-    }
-
-    public String getUrlRequest() {
-        return urlRequest;
-    }
-
-    public void setUrlRequest(String urlRequest) {
-        this.urlRequest = urlRequest;
     }
 
     @Override

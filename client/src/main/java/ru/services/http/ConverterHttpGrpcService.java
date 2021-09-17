@@ -3,15 +3,14 @@ package ru.services.http;
 import ru.model.CalculatingRequest;
 import ru.model.CalculatingRespons;
 
-/**
- * Обрабатывает запросы от UI пользователя.
- */
 public interface ConverterHttpGrpcService {
-    void startCalculat(CalculatingRequest calculatingRequest);
+    CalculatingRespons startCalculat(CalculatingRequest calculatingRequest);
 
     CalculatingRespons stopCalculat(CalculatingRequest calculatingRequest);
 
-    void getCalculatStatus(CalculatingRequest calculatingRequest);
+    CalculatingRespons getCalculatStatus(CalculatingRequest calculatingRequest);
 
-    void recommenceCalculating(CalculatingRequest calculatingRequest);
+    CalculatingRespons recommenceCalculating(CalculatingRequest calculatingRequest);
+
+    CalculatingRespons getCalculatingResult(CalculatingRequest calculatingRequest);
 }

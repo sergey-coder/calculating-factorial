@@ -1,0 +1,38 @@
+syntax = "proto3";
+package ru;
+
+option java_package = "ru";
+option java_multiple_files = true;
+
+message RequestEvent
+{
+    string uid = 1;
+    TypeEvent typeEvent = 2;
+    enum TypeEvent {
+        GET_STATUS = 0;
+        STOP = 1;
+        RECOMMENCE = 2;
+        RESULT = 3;
+        START = 4;
+    };
+    int32 number = 3;
+    int32 treads = 4;
+}
+
+message ResponseEvent
+{
+    string uid = 1;
+    string message = 2;
+    StatusCalculation status = 3;
+    enum StatusCalculation {
+        NOT_FOUND = 0;
+        EXECUTING = 1;
+        FINISHED = 2;
+        STOPPED = 3;
+    };
+    string resultCalculating = 4;
+}
+
+service ServerEndpoint {
+    rpc getEventCalculation(RequestEvent) returns (ResponseEvent) {};
+}

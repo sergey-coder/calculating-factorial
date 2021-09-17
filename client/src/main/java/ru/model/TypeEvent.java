@@ -1,36 +1,31 @@
 package ru.model;
 
+/**
+ * Перечень типов событий обрабатываемых client.
+ */
 public enum TypeEvent {
     /**
      * Событие запрашивает текущий статус вычисления на сервере.
      */
-    GET_STATUS(1),
+    GET_STATUS,
 
     /**
      * Событие останавливает вычисления на сервере.
      */
-    STOP(2),
+    STOP,
 
     /**
      * Событие возобнавляет вычисления на сервере.
      */
-    RECOMMENCE(3);
+    RECOMMENCE,
 
-    private final int code;
+    /**
+     * Событие запрашивает текущий результат вычисления на сервере.
+     */
+    RESULT,
 
-    TypeEvent(int code) {
-        this.code = code;
-    }
-
-    public static TypeEvent findByCode(int code) {
-        for (TypeEvent item : TypeEvent.values()) {
-            if (code == item.code) return item;
-        }
-        throw new IllegalArgumentException("Unknown TypeStatusLic: " + code);
-    }
-
-    public int getCode() {
-        return this.code;
-    }
-
+    /**
+     * Событие инициирует старт вычислений на сервере.
+     */
+    START;
 }

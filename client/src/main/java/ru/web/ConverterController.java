@@ -3,24 +3,19 @@ package ru.web;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.model.CalculatingRequest;
 import ru.model.CalculatingRespons;
 import ru.services.http.ConverterHttpGrpcService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  * Контроллер для приема HTTP запросов от пользователя
  * с последующей конвертацией в grpc и направлением для
  * производства вычисленний на сервер
- *
+ * <p>
  * Все запросы от пользователя должены передаваться через rest в формате json
  */
 @RestController
@@ -36,27 +31,22 @@ public class ConverterController {
     }
 
     /**
-     * Принимаем Post запрос с двумя обязательными параметрами
+     * Принимаем Post запрос на старт вычислений с двумя обязательными параметрами
      * Integer number Число от которого вычисляется факториал
      * Integer treads Количество потоков
      */
-    @PostMapping
-    public void requestStartCalculating(@RequestBody CalculatingRequest calculatingRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+    @PostMapping("/start")
+    public CalculatingRespons requestStartCalculating(@RequestBody CalculatingRequest calculatingRequest) {
         printLog(calculatingRequest, "start");
-        //переписан название сета
-        final URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .build()
-                .toUri();
-        calculatingRequest.setUrlRequest(uri.toString());
-        service.startCalculat(calculatingRequest);
+        return service.startCalculat(calculatingRequest);
     }
 
     /**
-     * Принимает Post запрос для остановки ранее запущенного вычесления
+     * Принимает Post запрос для остановки ранее запущенного вычесления,
+     * RequestBody должен содержать uid вычисления.
      */
     @PostMapping("/stop")
-    public CalculatingRespons stopCalculatingId(@RequestBody CalculatingRequest calculatingRequest){
+    public CalculatingRespons stopCalculatingId(@RequestBody CalculatingRequest calculatingRequest) {
         printLog(calculatingRequest, "stop");
         return service.stopCalculat(calculatingRequest);
     }
@@ -64,27 +54,36 @@ public class ConverterController {
     /**
      * Принимает Post запрос для получения информации
      * о статусе вычеслений по его UD
-     *
+     * <p>
      * Если вычисление по идентификатору не найдено должен возвращаться статус «Не запущено»
      * Если вычисление по идентификатору выполняется должен возвращаться статус «Выполняется. Завершено потоков X из Y»
      * Если вычисление по идентификатору завершено, должен возвращаться статус «Завершено. Значение факториала X равно Y»
      */
     @PostMapping("/status")
-    public void getCalculatingStatus(@RequestBody CalculatingRequest calculatingRequest){
+    public CalculatingRespons getCalculatingStatus(@RequestBody CalculatingRequest calculatingRequest) {
         printLog(calculatingRequest, "status");
-        service.getCalculatStatus(calculatingRequest);
+        return service.getCalculatStatus(calculatingRequest);
     }
 
     /**
-     * Принимает Post запрос для возобновления остановленого вычесления по его UD
+     * Принимает Post запрос для возобновления остановленого вычесления по его UID
      */
     @PostMapping("/recommence")
-    public void recommenceCalculating(@RequestBody CalculatingRequest calculatingRequest){
+    public CalculatingRespons recommenceCalculating(@RequestBody CalculatingRequest calculatingRequest) {
         printLog(calculatingRequest, "recommence");
-        service.recommenceCalculating(calculatingRequest);
+        return service.recommenceCalculating(calculatingRequest);
     }
 
-    private void printLog(CalculatingRequest calculatingRequest, String typerequest){
+    /**
+     * Принимает Post запрос для получения результата вычесления по его UID
+     */
+    @PostMapping("/result")
+    public CalculatingRespons getCalculatingResult(@RequestBody CalculatingRequest calculatingRequest) {
+        printLog(calculatingRequest, "result");
+        return service.getCalculatingResult(calculatingRequest);
+    }
+
+    private void printLog(CalculatingRequest calculatingRequest, String typerequest) {
         logger.info("Поступил HTTP запрос.Тип запроса: " + typerequest);
     }
 

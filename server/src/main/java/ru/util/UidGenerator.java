@@ -2,12 +2,21 @@ package ru.util;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+/**
+ * Генерирует Uid вычисления.
+ */
 public class UidGenerator {
-    private  static  final int SIZE = 5;
+    private static final int SIZE = 5;
 
-    private UidGenerator(){}
+    private UidGenerator() {
+    }
 
-    public static  String generate() {
-        return RandomStringUtils.random(SIZE,"1234567890lkjhlkljs");
+    /**
+     * Генерирует Uid вычисления.
+     *
+     * @return рандомный String длинной 5 символов.
+     */
+    public static String generate() {
+        return RandomStringUtils.random(SIZE, "1234567890lkjhlkljs");
     }
 }

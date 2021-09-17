@@ -11,9 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-
 import ru.model.CalculatingRequest;
 import ru.model.CalculatingRespons;
+import ru.services.grpc.GrpcService;
 import ru.services.grpc.SendRequestToGrpcServer;
 import ru.services.grpc.impl.GrpcServiceEventImpl;
 import ru.services.http.ConverterHttpGrpcService;
@@ -51,7 +51,7 @@ class ConverterControllerTest {
         calculatingRequest.setUid("testUid");
 
         SendRequestToGrpcServer sendRequestToGrpcServer = new SendRequestToGrpcServer();
-        ru.grpc.GrpcService grpcService = new GrpcServiceEventImpl(sendRequestToGrpcServer);
+        GrpcService grpcService = new GrpcServiceEventImpl(sendRequestToGrpcServer);
         ConverterHttpGrpcService service = new ConverterHttpGrpcServiceImpl(grpcService);
         ConverterController converterController = new ConverterController(service);
 
@@ -100,15 +100,35 @@ class ConverterControllerTest {
 //    }
 
     /**
-     * Проверка успешного запроса на метод requestCalculating
+     * Проверка успешного запроса на метод requestStartCalculating
      */
     @Test
-    void requestCalculating() throws Exception {
-        ResultActions resultActions = mockMvc.perform(post("/api/converter")
-                .content(objectMapper.writeValueAsString(new CalculatingRequest()))
+    void requestStartCalculating() throws Exception {
+        CalculatingRespons respons = new CalculatingRespons();
+        respons.setUid("someUid");
+        CalculatingRequest request = new CalculatingRequest();
+
+        //Mockito.when(service.startCalculat(Mockito.mock(CalculatingRequest.class))).thenReturn(respons);
+        Mockito.doReturn(respons).when(service).startCalculat(request);
+        CalculatingRespons calculatingRespons = testClass.requestStartCalculating(request);
+
+        ResultActions resultActions = mockMvc.perform(post("/api/converter/start")
+                .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is(200));
+                .andExpect(status().is(200))
+                .andExpect(jsonPath("uid").value(respons.getUid()));
+
+
+//        mockMvc.perform(post("/form"))
+//                .andExpect(matchAll(
+//                        status().isOk(),
+//                        redirectedUrl("/person/1"),
+//                        model().size(1),
+//                        model().attributeExists("person"),
+//                        flash().attributeCount(1),
+//                        flash().attribute("message", "success!"))
+//                );
     }
 
     /**
