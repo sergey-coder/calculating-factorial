@@ -9,82 +9,64 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.model.CalculatingRequest;
 import ru.model.CalculatingRespons;
-import ru.services.http.ConverterHttpGrpcService;
+import ru.services.http.ConverterHttpService;
 
 /**
  * Контроллер для приема HTTP запросов от пользователя
  * с последующей конвертацией в grpc и направлением для
  * производства вычисленний на сервер
- * <p>
  * Все запросы от пользователя должены передаваться через rest в формате json
  */
 @RestController
 @RequestMapping(value = "**/api/converter", consumes = "application/json", produces = "application/json")
 public class ConverterController {
 
-    private static Logger logger = LoggerFactory.getLogger(ConverterController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConverterController.class);
 
-    private final ConverterHttpGrpcService service;
+    private final ConverterHttpService service;
 
-    public ConverterController(@Autowired ConverterHttpGrpcService service) {
+    public ConverterController(@Autowired ConverterHttpService service) {
         this.service = service;
     }
 
     /**
-     * Принимаем Post запрос на старт вычислений с двумя обязательными параметрами
-     * Integer number Число от которого вычисляется факториал
-     * Integer treads Количество потоков
+     * Принимаем Post запрос на запуск события с вычислением факториала. вычислений с двумя обязательными параметрами
+     * @param calculatingRequest запрос от UI пользователя по модели CalculatingRequest.
+     *         запрос по событию START запускает вычисления, должен содержать три обязательных параметра:
+     *                 Integer number Число от которого вычисляется факториал
+     *                 Integer treads Количество потоков
+     *                 TypeEvent START
+     *
+     *         запрос по событию STOP останавливает ранее запущенное вычесления, должен содержать два обязательных параметра:
+     *                 String uid вычисления
+     *                 TypeEvent STOP
+     *
+     *         запрос по событию GET_STATUS предоставляет информацию о вычислении, должен содержать два обязательных параметра:
+     *                 String uid вычисления
+     *                 TypeEvent GET_STATUS
+     *              Если вычисление по идентификатору не найдено возвращаться статус «Не запущено»
+     *              Если вычисление по идентификатору выполняется возвращаться статус «Выполняется. Завершено потоков X из Y»
+     *              Если вычисление по идентификатору завершено, возвращаться статус «Завершено. Значение факториала X равно Y»
+     *
+     *         запрос по событию RECOMMENCE возобновляет вычисление, если оно не завершено,
+     *                           в следствие остановки сервера, должен содержать два обязательных параметра:
+     *                 String uid вычисления
+     *                 TypeEvent RECOMMENCE
+     *
+     *         запрос по событию RESULT выдает результат вычесления по его UID, должен содержать два обязательных параметра:
+     *                 String uid вычисления
+     *                 TypeEvent RESULT
+     *
+     * @return ответ от gRPC сервера с ответом по модели CalculatingRespons.
      */
-    @PostMapping("/start")
-    public CalculatingRespons requestStartCalculating(@RequestBody CalculatingRequest calculatingRequest) {
-        printLog(calculatingRequest, "start");
-        return service.startCalculat(calculatingRequest);
+    @PostMapping("/factorial")
+    public CalculatingRespons getEventCalculating(@RequestBody CalculatingRequest calculatingRequest) {
+        printLog(calculatingRequest);
+        return service.startEventCalculating(calculatingRequest);
     }
 
-    /**
-     * Принимает Post запрос для остановки ранее запущенного вычесления,
-     * RequestBody должен содержать uid вычисления.
-     */
-    @PostMapping("/stop")
-    public CalculatingRespons stopCalculatingId(@RequestBody CalculatingRequest calculatingRequest) {
-        printLog(calculatingRequest, "stop");
-        return service.stopCalculat(calculatingRequest);
-    }
-
-    /**
-     * Принимает Post запрос для получения информации
-     * о статусе вычеслений по его UD
-     * <p>
-     * Если вычисление по идентификатору не найдено должен возвращаться статус «Не запущено»
-     * Если вычисление по идентификатору выполняется должен возвращаться статус «Выполняется. Завершено потоков X из Y»
-     * Если вычисление по идентификатору завершено, должен возвращаться статус «Завершено. Значение факториала X равно Y»
-     */
-    @PostMapping("/status")
-    public CalculatingRespons getCalculatingStatus(@RequestBody CalculatingRequest calculatingRequest) {
-        printLog(calculatingRequest, "status");
-        return service.getCalculatStatus(calculatingRequest);
-    }
-
-    /**
-     * Принимает Post запрос для возобновления остановленого вычесления по его UID
-     */
-    @PostMapping("/recommence")
-    public CalculatingRespons recommenceCalculating(@RequestBody CalculatingRequest calculatingRequest) {
-        printLog(calculatingRequest, "recommence");
-        return service.recommenceCalculating(calculatingRequest);
-    }
-
-    /**
-     * Принимает Post запрос для получения результата вычесления по его UID
-     */
-    @PostMapping("/result")
-    public CalculatingRespons getCalculatingResult(@RequestBody CalculatingRequest calculatingRequest) {
-        printLog(calculatingRequest, "result");
-        return service.getCalculatingResult(calculatingRequest);
-    }
-
-    private void printLog(CalculatingRequest calculatingRequest, String typerequest) {
-        logger.info("Поступил HTTP запрос.Тип запроса: " + typerequest);
+    private void printLog(CalculatingRequest calculatingRequest) {
+        logger.info("Поступил HTTP запрос.Тип event: " + calculatingRequest.getTypeEvent());
     }
 
 }

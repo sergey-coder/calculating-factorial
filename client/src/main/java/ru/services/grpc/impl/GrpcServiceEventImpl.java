@@ -1,13 +1,11 @@
 package ru.services.grpc.impl;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import ru.RequestEvent;
 import ru.ResponseEvent;
 import ru.model.CalculatingRequest;
 import ru.model.CalculatingRespons;
-import ru.model.TypeEvent;
+import ru.services.grpc.GrpcRequest;
 import ru.services.grpc.GrpcService;
 import ru.services.grpc.SendRequestToGrpcServer;
 
@@ -19,121 +17,41 @@ import ru.services.grpc.SendRequestToGrpcServer;
 public class GrpcServiceEventImpl implements GrpcService {
 
     private final SendRequestToGrpcServer sendRequestToGrpcServer;
+    private final GrpcRequest grpcRequest;
 
-    public GrpcServiceEventImpl(SendRequestToGrpcServer sendRequestToGrpcServer) {
+    public GrpcServiceEventImpl(SendRequestToGrpcServer sendRequestToGrpcServer, GrpcRequest grpcRequest) {
         this.sendRequestToGrpcServer = sendRequestToGrpcServer;
+        this.grpcRequest = grpcRequest;
     }
 
     /**
-     * Отправляем gRPC запрос по указанному URL
+     * Принимает запрос по модели CalculatingRequest,
+     * передает запрос по модели RequestEvent для отправки на gRPC сервер,
+     * принимает от сервера ответ по модели ResponseEvent,
+     * передает инициатору ответ по модели CalculatingRespons.
      *
-     * @param typeEvent          тип события enum.
-     * @param calculatingRequest запрос пользователя.
+     * @param calculatingRequest запрос пользователя по модели CalculatingRequest.
      * @return ответ от gRPC преобразованный в модель  CalculatingRespons.
      */
     @Override
-    public CalculatingRespons sendGrpcRequest(TypeEvent typeEvent, CalculatingRequest calculatingRequest) {
-        ResponseEvent responseEvent = sendRequestToGrpcServer.sendRequestToServer
-                (
-                        toServerRequest(
-                                typeEvent,
-                                calculatingRequest
-                        )
-                );
-
-        return toCalculatingRespons(responseEvent, typeEvent);
+    public CalculatingRespons sendGrpcRequest(CalculatingRequest calculatingRequest) {
+        RequestEvent requestEvent = grpcRequest.createGrpcRequest(calculatingRequest);
+        ResponseEvent responseEvent = sendRequestToGrpcServer.sendRequestToServer(requestEvent);
+        return toCalculatingRespons(responseEvent);
     }
 
     /**
-     * /**
      * Преобразует ответ gRPC сервера по моедли CalculatingRespons
      *
      * @param responseEvent модель сообщения от gRPC
-     * @param typeEvent     enum перечень типов событий обрабатываемых client
      * @return ответ сервера по модели CalculatingRespons.
      */
-    private CalculatingRespons toCalculatingRespons(ResponseEvent responseEvent, TypeEvent typeEvent) {
+    private CalculatingRespons toCalculatingRespons(ResponseEvent responseEvent) {
         CalculatingRespons calculatingRespons = new CalculatingRespons();
-        switch (typeEvent) {
-            case STOP, RECOMMENCE, START -> {
-                calculatingRespons.setMessage(responseEvent.getMessage());
-                calculatingRespons.setUid(responseEvent.getUid());
-                return calculatingRespons;
-            }
-            case GET_STATUS, RESULT -> {
-                calculatingRespons.setMessage(responseEvent.getMessage());
-                calculatingRespons.setUid(responseEvent.getUid());
-                calculatingRespons.setResultCaculating(responseEvent.getResultCalculating());
-                return calculatingRespons;
-            }
-            default -> throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "не известный тип запроса");
-        }
+        calculatingRespons.setMessage(responseEvent.getMessage());
+        calculatingRespons.setUid(responseEvent.getUid());
+        calculatingRespons.setResultCaculating(responseEvent.getResultCalculating());
+        return calculatingRespons;
     }
 
-    /**
-     * Определяет тип события.
-     * В зависимости от типа собития определеям способ формирования запроса gPRC по модели RequestEvent.
-     */
-    private RequestEvent toServerRequest(TypeEvent typeEvent, CalculatingRequest calculatingRequest) {
-        return switch (typeEvent) {
-            case STOP -> getStopEvent(calculatingRequest);
-            case GET_STATUS -> getStatusEvent(calculatingRequest);
-            case RECOMMENCE -> getRecommenceEvent(calculatingRequest);
-            case START -> getStartEvent(calculatingRequest);
-            case RESULT -> getResultEvent(calculatingRequest);
-        };
-    }
-
-    /**
-     * Формирует запрос для события RESULT в gRPC request.
-     */
-    private RequestEvent getResultEvent(CalculatingRequest calculatingRequest) {
-        return RequestEvent.newBuilder()
-                .setUid(calculatingRequest.getUid())
-                .setTypeEvent(RequestEvent.TypeEvent.RESULT)
-                .build();
-    }
-
-    /**
-     * Формирует запрос для события RECOMMENCE в gRPC request.
-     */
-    private RequestEvent getRecommenceEvent(CalculatingRequest calculatingRequest) {
-        return RequestEvent.newBuilder()
-                .setUid(calculatingRequest.getUid())
-                .setTypeEvent(RequestEvent.TypeEvent.RECOMMENCE)
-                .build();
-    }
-
-    /**
-     * Формирует запрос для события GET_STATUS в gRPC request.
-     */
-    private RequestEvent getStatusEvent(CalculatingRequest calculatingRequest) {
-        return RequestEvent.newBuilder()
-                .setUid(calculatingRequest.getUid())
-                .setTypeEvent(RequestEvent.TypeEvent.GET_STATUS)
-                .build();
-    }
-
-    /**
-     * Формирует запрос для события STOP в gRPC request.
-     */
-    private RequestEvent getStopEvent(CalculatingRequest calculatingRequest) {
-
-        return RequestEvent.newBuilder()
-                .setUid(calculatingRequest.getUid())
-                .setTypeEvent(RequestEvent.TypeEvent.STOP)
-                .build();
-    }
-
-    /**
-     * Формирует запрос для события START в gRPC request.
-     */
-    private RequestEvent getStartEvent(CalculatingRequest calculatingRequest) {
-
-        return RequestEvent.newBuilder()
-                .setTypeEvent(RequestEvent.TypeEvent.START)
-                .setTreads(calculatingRequest.getTreads())
-                .setNumber(calculatingRequest.getNumber())
-                .build();
-    }
 }

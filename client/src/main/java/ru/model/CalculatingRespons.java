@@ -5,14 +5,20 @@ package ru.model;
  */
 public class CalculatingRespons {
 
+    /**
+     * Идентификатор вычислений генерируемый сервером.
+     */
     private String uid;
 
+    /**
+     * Результат выполнения определенного типа event.
+     */
     private String message;
 
+    /**
+     * Результат вычисления факториала.
+     */
     private String resultCaculating = "результат вычислений еще не определен";
-
-    public CalculatingRespons() {
-    }
 
     public String getUid() {
         return uid;

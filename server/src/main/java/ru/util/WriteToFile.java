@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import ru.domain.Calculation;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,7 +35,7 @@ public class WriteToFile {
         }
     }
 
-    public static void saveDataCalculating(Calculation calculation){
+    public static synchronized void saveDataCalculating(Calculation calculation){
         logger.info("запись в файл");
         try {
             Files.write(path, Collections.singleton(calculation.toString()), StandardOpenOption.APPEND);
@@ -53,7 +52,7 @@ public class WriteToFile {
         }
     }
 
-    public static void deleteDataCalculating(String uid){
+    public static synchronized void deleteDataCalculating(String uid){
         logger.info("удаление записи из файла");
         try {
             List<String> recordsToSave = Files.lines(path).filter(record -> !record.contains(uid)).collect(Collectors.toList());
@@ -74,7 +73,6 @@ public class WriteToFile {
             calculation.setUid(strings[0]);
             calculation.setNumber(Integer.parseInt(strings[1]));
             calculation.setTreads(Integer.parseInt(strings[2]));
-            //deleteDataCalculating(uid);
             return calculation;
         } catch (IOException e) {
             e.printStackTrace();

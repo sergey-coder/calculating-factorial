@@ -1,16 +1,10 @@
 package ru.web;
 
-import io.grpc.internal.testing.StreamRecorder;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import ru.services.GrpcControllerServices;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = GrpcController.class)
@@ -19,8 +13,7 @@ class GrpcControllerTest {
     @Autowired
     GrpcController grpcController;
 
-    @MockBean
-    GrpcControllerServices grpcControllerServices;
+
 
     /**
      * Формирует ли правильный ответ.

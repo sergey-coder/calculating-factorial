@@ -1,7 +1,7 @@
 package ru.domain;
 
 import ru.ResponseEvent;
-import ru.calculate.concurrent.CalculateMainThread;
+import ru.calculate.CalculateFactorial;
 
 /**
  * Модель для хранения данных о вычислениях.
@@ -13,17 +13,10 @@ public class Calculation {
     private String resultCalculation = "результат вычислений еще не определен";
     private int number;
     private int treads;
-    private CalculateMainThread calculateMainThread;
+    private CalculateFactorial calculateFactorial;
 
     public String getUid() {
         return uid;
-    }
-
-    @Override
-    public String toString() {
-        return  uid +
-                "," + number +
-                "," + treads;
     }
 
     public void setUid(String uid) {
@@ -62,12 +55,20 @@ public class Calculation {
         this.treads = treads;
     }
 
-    public CalculateMainThread getCalculateMainThread() {
-        return calculateMainThread;
+    public CalculateFactorial getCalculateFactorial() {
+        return calculateFactorial;
     }
 
-    public void setCalculateMainThread(CalculateMainThread calculateMainThread) {
-        this.calculateMainThread = calculateMainThread;
+    public void setCalculateFactorial(CalculateFactorial calculateFactorial) {
+        this.calculateFactorial = calculateFactorial;
     }
+
+    @Override
+    public String toString() {
+        return  uid +
+                "," + number +
+                "," + treads;
+    }
+
 }
 

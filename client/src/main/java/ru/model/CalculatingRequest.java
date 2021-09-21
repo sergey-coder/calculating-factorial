@@ -5,19 +5,25 @@ package ru.model;
  */
 public class CalculatingRequest {
 
+    /**
+     * Число для вычисления его факториала.
+     */
     private Integer number;
 
-    private Integer treads;
+    /**
+     * Количество потоков для производства вычисления.
+     */
+    private Integer thread;
 
+    /**
+     * Идентификатор вычисления.
+     */
     private String uid;
 
-    public CalculatingRequest(Integer number, Integer treads) {
-        this.number = number;
-        this.treads = treads;
-    }
-
-    public CalculatingRequest() {
-    }
+    /**
+     * Тип события, для определения типа операции производимой над вычислением или его результатом.
+     */
+    private TypeEvent typeEvent;
 
     public Integer getNumber() {
         return number;
@@ -27,12 +33,12 @@ public class CalculatingRequest {
         this.number = number;
     }
 
-    public Integer getTreads() {
-        return treads;
+    public Integer getThread() {
+        return thread;
     }
 
-    public void setTreads(Integer treads) {
-        this.treads = treads;
+    public void setThread(Integer thread) {
+        this.thread = thread;
     }
 
     public String getUid() {
@@ -43,11 +49,19 @@ public class CalculatingRequest {
         this.uid = uid;
     }
 
+    public TypeEvent getTypeEvent() {
+        return typeEvent;
+    }
+
+    public void setTypeEvent(TypeEvent typeEvent) {
+        this.typeEvent = typeEvent;
+    }
+
     @Override
     public String toString() {
         return "CalculatingRequest{" +
                 "number=" + number +
-                ", treads=" + treads +
+                ", treads=" + thread +
                 '}';
     }
 

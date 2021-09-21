@@ -17,6 +17,6 @@ public class UidGenerator {
      * @return рандомный String длинной 5 символов.
      */
     public static String generate() {
-        return RandomStringUtils.random(SIZE, "1234567890lkjhlkljs");
+        return RandomStringUtils.random(SIZE, "1234567890lkjhscvbnm");
     }
 }

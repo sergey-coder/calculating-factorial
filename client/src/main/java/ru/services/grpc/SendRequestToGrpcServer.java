@@ -9,10 +9,14 @@ import ru.RequestEvent;
 import ru.ResponseEvent;
 import ru.ServerEndpointGrpc;
 
+/**
+ * Отправляет запрос по протоколу gRPC на сервер.
+ */
 @Component
 public class SendRequestToGrpcServer {
 
-    private static Logger logger = LoggerFactory.getLogger(SendRequestToGrpcServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(SendRequestToGrpcServer.class);
+
     /**
      * Зарезирвированный local Url для gRPC server.
      */
@@ -28,8 +32,8 @@ public class SendRequestToGrpcServer {
                 + " тип запроса "
                 + requestEvent.getTypeEvent());
 
-        logger.info("дебаговый лог "
-                + "Uid " + requestEvent.getUid() + "\\n"
+        logger.debug(
+                "Uid " + requestEvent.getUid() + "\\n"
                 + "Number " + requestEvent.getNumber() + "\\n"
                 + "Treads " + requestEvent.getTreads() + "\\n"
                 + "TypeEvent " + requestEvent.getTypeEvent());
