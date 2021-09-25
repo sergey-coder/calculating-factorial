@@ -6,6 +6,7 @@ import ru.ResponseEvent;
 import ru.calculate.CalculateFactorial;
 import ru.dao.impl.CalculationDaoImpl;
 import ru.domain.Calculation;
+import ru.file.WriteFile;
 import ru.services.ExecuteEvent;
 import ru.util.UidGenerator;
 
@@ -15,9 +16,11 @@ import ru.util.UidGenerator;
 @Service
 public class ExecuteStartEvent implements ExecuteEvent {
 
+    private final WriteFile writeFile;
     private final CalculationDaoImpl calculationDaoImpl;
 
-    public ExecuteStartEvent(CalculationDaoImpl calculationDaoImpl) {
+    public ExecuteStartEvent(WriteFile writeFile, CalculationDaoImpl calculationDaoImpl) {
+        this.writeFile = writeFile;
         this.calculationDaoImpl = calculationDaoImpl;
     }
 
@@ -31,7 +34,6 @@ public class ExecuteStartEvent implements ExecuteEvent {
      */
     @Override
     public ResponseEvent startEvent(RequestEvent request) {
-
         Calculation calculation = new Calculation();
         calculation.setUid(UidGenerator.generate());
         calculation.setNumber(request.getNumber());
@@ -53,7 +55,7 @@ public class ExecuteStartEvent implements ExecuteEvent {
      * @param calculation созданная запись о вычислении.
      */
     public void startCalculation(Calculation calculation) {
-        CalculateFactorial calculateFactorial = new CalculateFactorial(calculationDaoImpl, calculation);
+        CalculateFactorial calculateFactorial = new CalculateFactorial(writeFile, calculationDaoImpl, calculation);
         calculation.setCalculateFactorial(calculateFactorial);
         calculationDaoImpl.addNewCalculation(calculation);
 

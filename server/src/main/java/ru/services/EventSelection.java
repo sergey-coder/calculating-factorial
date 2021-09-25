@@ -18,7 +18,11 @@ public class EventSelection {
     private final ExecuteRecommenceEvent executeRecommenceEvent;
     private final ExecuteResultEvent executeResultEvent;
 
-    public EventSelection(ExecuteStartEvent executeStartEvent, ExecuteStopEvent executeStopEvent, ExecuteStatusEvent executeStatusEvent, ExecuteRecommenceEvent executeRecommenceEvent, ExecuteResultEvent executeResultEvent) {
+    public EventSelection(ExecuteStartEvent executeStartEvent,
+                          ExecuteStopEvent executeStopEvent,
+                          ExecuteStatusEvent executeStatusEvent,
+                          ExecuteRecommenceEvent executeRecommenceEvent,
+                          ExecuteResultEvent executeResultEvent) {
         this.executeStartEvent = executeStartEvent;
         this.executeStopEvent = executeStopEvent;
         this.executeStatusEvent = executeStatusEvent;

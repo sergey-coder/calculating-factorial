@@ -34,9 +34,12 @@ public class GrpcController extends ServerEndpointGrpc.ServerEndpointImplBase {
                                     StreamObserver<ResponseEvent> responseObserver) {
         logger.info("поступил gRPC запрос, тип запроса " + request.getTypeEvent().name() + " uid " + request.getUid());
 
-        ResponseEvent response = eventSelection.selectEventProcess(request.getTypeEvent()).startEvent(request);
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        Thread thread = new Thread(() -> {
+            ResponseEvent response = eventSelection.selectEventProcess(request.getTypeEvent()).startEvent(request);
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        });
+        thread.start();
     }
 
 }

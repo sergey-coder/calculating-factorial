@@ -56,7 +56,7 @@ public class ExecuteResultEvent implements ExecuteEvent {
                     calculation.getResultCalculation()
             );
             default -> createResponse(
-                    "результат не получен",
+                    "результат вычислений по данному event получить не удалось",
                     ""
             );
         };

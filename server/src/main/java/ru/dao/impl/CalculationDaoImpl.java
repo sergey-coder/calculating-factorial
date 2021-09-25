@@ -4,9 +4,8 @@ import org.springframework.stereotype.Component;
 import ru.dao.CalculationDao;
 import ru.domain.Calculation;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Совершает операции CRUD над колецией с сохраненной информацией о вычеслениях.
@@ -14,10 +13,10 @@ import java.util.Optional;
 @Component
 public class CalculationDaoImpl implements CalculationDao<Calculation> {
 
-    private final List<Calculation> listCalculation;
+    private final CopyOnWriteArrayList<Calculation> listCalculation;
 
     {
-        listCalculation = new ArrayList<>();
+        listCalculation = new CopyOnWriteArrayList<>();
     }
 
     /**

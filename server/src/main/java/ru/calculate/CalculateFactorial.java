@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.ResponseEvent;
 import ru.dao.impl.CalculationDaoImpl;
 import ru.domain.Calculation;
-import ru.util.WriteToFile;
+import ru.file.WriteFile;
 
 import java.math.BigInteger;
 import java.util.concurrent.ForkJoinPool;
@@ -18,12 +18,14 @@ public class CalculateFactorial implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(CalculateFactorial.class);
 
+    private final WriteFile writeFile;
     private final CalculationDaoImpl calculationDaoImpl;
     private final Calculation calculation;
     private BigInteger finishResult;
     private ForkJoinPool forkJoinPool;
 
-    public CalculateFactorial(CalculationDaoImpl calculationDaoImpl, Calculation calculation) {
+    public CalculateFactorial(WriteFile writeFile, CalculationDaoImpl calculationDaoImpl, Calculation calculation) {
+        this.writeFile = writeFile;
         this.calculationDaoImpl = calculationDaoImpl;
         this.calculation = calculation;
     }
@@ -59,7 +61,7 @@ public class CalculateFactorial implements Runnable {
      * Создает инстанс TaskCalculation класса и передает его на исполнении в ForkJoinPool.
      */
     private void startCalculation() {
-        WriteToFile.saveDataCalculating(calculation);
+        writeFile.saveDataCalculating(calculation);
         TaskCalculation taskCalculation = new TaskCalculation(1, calculation.getNumber());
         forkJoinPool = new ForkJoinPool(calculation.getTreads());
         finishResult = forkJoinPool.invoke(taskCalculation);
@@ -72,7 +74,7 @@ public class CalculateFactorial implements Runnable {
         calculation.setResultCalculation(finishResult.toString());
         calculation.setStatusCalculation(ResponseEvent.StatusCalculation.FINISHED);
         calculationDaoImpl.updateCalculation(calculation);
-        WriteToFile.deleteDataCalculating(calculation.getUid());
+        writeFile.deleteDataCalculating(calculation.getUid());
         logger.info("вычисления с uid " + calculation.getUid() + " окончены");
     }
 
@@ -102,7 +104,7 @@ public class CalculateFactorial implements Runnable {
                     currentResult = currentResult.multiply(BigInteger.valueOf(startNumber));
                     startNumber++;
                     try {
-                        Thread.sleep(10000);
+                        Thread.sleep(1);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

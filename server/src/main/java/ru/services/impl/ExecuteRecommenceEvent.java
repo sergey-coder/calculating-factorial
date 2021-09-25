@@ -3,8 +3,10 @@ package ru.services.impl;
 import org.springframework.stereotype.Service;
 import ru.RequestEvent;
 import ru.ResponseEvent;
+import ru.domain.Calculation;
+import ru.file.ReadFile;
 import ru.services.ExecuteEvent;
-import ru.util.WriteToFile;
+
 
 /**
  * Реализует выполнение event Recommence.
@@ -13,9 +15,11 @@ import ru.util.WriteToFile;
 public class ExecuteRecommenceEvent implements ExecuteEvent {
 
     private final ExecuteStartEvent executeStartEvent;
+    private final ReadFile readFile;
 
-    public ExecuteRecommenceEvent(ExecuteStartEvent executeStartEvent) {
+    public ExecuteRecommenceEvent(ExecuteStartEvent executeStartEvent, ReadFile readFile) {
         this.executeStartEvent = executeStartEvent;
+        this.readFile = readFile;
     }
 
     /**
@@ -29,8 +33,10 @@ public class ExecuteRecommenceEvent implements ExecuteEvent {
     public ResponseEvent startEvent(RequestEvent request) {
         String uid = request.getUid();
 
-        if (WriteToFile.checkCalculation(uid)) {
-            executeStartEvent.startCalculation(WriteToFile.getCalculation(uid));
+        if (readFile.checkCalculation(uid)) {
+            Calculation calculation = readFile.getCalculation(uid);
+            executeStartEvent.startCalculation(calculation);
+
             return ResponseEvent.newBuilder()
                     .setUid(uid)
                     .setMessage("вычесления возобновлены")
