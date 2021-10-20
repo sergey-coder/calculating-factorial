@@ -26,14 +26,12 @@ class GrpcServiceEventImplTest {
     @MockBean
     SendRequestToGrpcServer sendRequestToGrpcServerMock;
 
-    @MockBean
-    GrpcRequest grpcRequest;
-
     /**
      * Тестируем вызов метода createGrpcRequest().
      */
     @Test
     void callGrpcRequest() {
+        GrpcRequest grpcRequest = Mockito.mock(GrpcRequest.class);
         CalculatingRequest request = new CalculatingRequest();
         request.setTypeEvent(TypeEvent.START);
         request.setNumber(111);
@@ -44,7 +42,6 @@ class GrpcServiceEventImplTest {
                 .setMessage("вычисления успешно начаты").build();
 
         Mockito.when(sendRequestToGrpcServerMock.sendRequestToServer(Mockito.any())).thenReturn(responseEvent);
-
         grpcServiceEvent.sendGrpcRequest(request);
         Mockito.verify(grpcRequest, Mockito.times(1)).createGrpcRequest(request);
 
@@ -55,6 +52,7 @@ class GrpcServiceEventImplTest {
      */
     @Test
     void callSendRequestToGrpcServer() {
+        GrpcRequest grpcRequest = Mockito.mock(GrpcRequest.class);
         CalculatingRequest request = new CalculatingRequest();
         request.setTypeEvent(TypeEvent.START);
         request.setNumber(111);

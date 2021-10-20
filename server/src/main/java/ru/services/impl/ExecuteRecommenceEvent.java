@@ -3,8 +3,8 @@ package ru.services.impl;
 import org.springframework.stereotype.Service;
 import ru.RequestEvent;
 import ru.ResponseEvent;
-import ru.domain.Calculation;
-import ru.file.ReadFile;
+import ru.calculate.domain.Calculation;
+import ru.dao.ServiceRecommenceCalculate;
 import ru.services.ExecuteEvent;
 
 
@@ -15,11 +15,16 @@ import ru.services.ExecuteEvent;
 public class ExecuteRecommenceEvent implements ExecuteEvent {
 
     private final ExecuteStartEvent executeStartEvent;
-    private final ReadFile readFile;
+    private final ServiceRecommenceCalculate serviceRecommenceCalculate;
 
-    public ExecuteRecommenceEvent(ExecuteStartEvent executeStartEvent, ReadFile readFile) {
+    /**
+     * uid вычисления.
+     */
+    private String uid;
+
+    public ExecuteRecommenceEvent(ExecuteStartEvent executeStartEvent, ServiceRecommenceCalculate serviceRecommenceCalculate) {
         this.executeStartEvent = executeStartEvent;
-        this.readFile = readFile;
+        this.serviceRecommenceCalculate = serviceRecommenceCalculate;
     }
 
     /**
@@ -31,20 +36,26 @@ public class ExecuteRecommenceEvent implements ExecuteEvent {
      */
     @Override
     public ResponseEvent startEvent(RequestEvent request) {
-        String uid = request.getUid();
+        uid = request.getUid();
 
-        if (readFile.checkCalculation(uid)) {
-            Calculation calculation = readFile.getCalculation(uid);
+        if (serviceRecommenceCalculate.checkCalculation(uid)) {
+            Calculation calculation = serviceRecommenceCalculate.getCalculation(uid);
             executeStartEvent.startCalculation(calculation);
-
-            return ResponseEvent.newBuilder()
-                    .setUid(uid)
-                    .setMessage("вычесления возобновлены")
-                    .build();
+            return createResponseEvent("вычесления возобновлены");
         }
+        return createResponseEvent("вычесления не могут возобновлены");
+    }
+
+    /**
+     * Формирует ответ для инициатора.
+     *
+     * @param message сообщение для инициатора.
+     * @return ответ по модели ResponseEvent.
+     */
+    private ResponseEvent createResponseEvent(String message) {
         return ResponseEvent.newBuilder()
                 .setUid(uid)
-                .setMessage("вычесления не могут возобновлены")
+                .setMessage(message)
                 .build();
     }
 }

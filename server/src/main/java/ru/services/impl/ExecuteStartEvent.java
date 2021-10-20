@@ -1,14 +1,15 @@
 package ru.services.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.RequestEvent;
 import ru.ResponseEvent;
 import ru.calculate.CalculateFactorial;
-import ru.dao.impl.CalculationDaoImpl;
-import ru.domain.Calculation;
-import ru.file.WriteFile;
+import ru.calculate.domain.Calculation;
+import ru.calculate.impl.CalculationDaoImpl;
+import ru.dao.ServiceRecommenceCalculate;
 import ru.services.ExecuteEvent;
-import ru.util.UidGenerator;
+import ru.services.util.UidGenerator;
 
 /**
  * Реализует выполнение event Start.
@@ -16,13 +17,16 @@ import ru.util.UidGenerator;
 @Service
 public class ExecuteStartEvent implements ExecuteEvent {
 
-    private final WriteFile writeFile;
-    private final CalculationDaoImpl calculationDaoImpl;
+    @Autowired
+    private CalculationDaoImpl calculationDaoImpl;
 
-    public ExecuteStartEvent(WriteFile writeFile, CalculationDaoImpl calculationDaoImpl) {
-        this.writeFile = writeFile;
-        this.calculationDaoImpl = calculationDaoImpl;
-    }
+    @Autowired
+    private ServiceRecommenceCalculate serviceRecommenceCalculate;
+
+    /**
+     * Для хранения данных о вычислении.
+     */
+    private  Calculation calculation;
 
     /**
      * Формирует запись в памяти о вычислении,
@@ -34,13 +38,8 @@ public class ExecuteStartEvent implements ExecuteEvent {
      */
     @Override
     public ResponseEvent startEvent(RequestEvent request) {
-        Calculation calculation = new Calculation();
-        calculation.setUid(UidGenerator.generate());
-        calculation.setNumber(request.getNumber());
-        calculation.setTreads(request.getTreads());
-        calculation.setStatusCalculation(ResponseEvent.StatusCalculation.EXECUTING);
-
-        startCalculation(calculation);
+        createCalculation(request);
+        startCalculation();
 
         return ResponseEvent.newBuilder()
                 .setUid(calculation.getUid())
@@ -49,17 +48,37 @@ public class ExecuteStartEvent implements ExecuteEvent {
     }
 
     /**
-     * Сохраняет ссылку на инстанс CalculateFactorial,
-     * Запускает вычисления факториала в отдельном потоке.
-     *
-     * @param calculation созданная запись о вычислении.
+     * Запускает вычисления факториала.
+     * @param calculation данные о вычислении по модели Calculation.
      */
     public void startCalculation(Calculation calculation) {
-        CalculateFactorial calculateFactorial = new CalculateFactorial(writeFile, calculationDaoImpl, calculation);
+        this.calculation = calculation;
+        startCalculation();
+    }
+
+    /**
+     * Сохраняет ссылку на инстанс CalculateFactorial,
+     * Запускает вычисления факториала в отдельном потоке.
+     */
+    private void startCalculation() {
+        CalculateFactorial calculateFactorial = new CalculateFactorial(serviceRecommenceCalculate, calculationDaoImpl, calculation);
         calculation.setCalculateFactorial(calculateFactorial);
         calculationDaoImpl.addNewCalculation(calculation);
 
         Thread thread = new Thread(calculateFactorial);
         thread.start();
     }
+
+    /**
+     * Формирует запись о вычислении по модели Calculation.
+     * @param request запрос от client по модели RequestEvent.
+     */
+    private void createCalculation(RequestEvent request){
+        calculation = new Calculation();
+        calculation.setUid(UidGenerator.generate());
+        calculation.setNumber(request.getNumber());
+        calculation.setTreads(request.getTreads());
+        calculation.setStatusCalculation(ResponseEvent.StatusCalculation.EXECUTING);
+    }
+
 }

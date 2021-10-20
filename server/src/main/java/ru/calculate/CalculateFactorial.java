@@ -3,9 +3,9 @@ package ru.calculate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.ResponseEvent;
-import ru.dao.impl.CalculationDaoImpl;
-import ru.domain.Calculation;
-import ru.file.WriteFile;
+import ru.calculate.domain.Calculation;
+import ru.calculate.impl.CalculationDaoImpl;
+import ru.dao.ServiceRecommenceCalculate;
 
 import java.math.BigInteger;
 import java.util.concurrent.ForkJoinPool;
@@ -18,14 +18,17 @@ public class CalculateFactorial implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(CalculateFactorial.class);
 
-    private final WriteFile writeFile;
+    private final ServiceRecommenceCalculate serviceRecommenceCalculate;
     private final CalculationDaoImpl calculationDaoImpl;
     private final Calculation calculation;
     private BigInteger finishResult;
     private ForkJoinPool forkJoinPool;
 
-    public CalculateFactorial(WriteFile writeFile, CalculationDaoImpl calculationDaoImpl, Calculation calculation) {
-        this.writeFile = writeFile;
+    public CalculateFactorial(
+            ServiceRecommenceCalculate serviceRecommenceCalculate,
+            CalculationDaoImpl calculationDaoImpl,
+            Calculation calculation) {
+        this.serviceRecommenceCalculate = serviceRecommenceCalculate;
         this.calculationDaoImpl = calculationDaoImpl;
         this.calculation = calculation;
     }
@@ -61,7 +64,7 @@ public class CalculateFactorial implements Runnable {
      * Создает инстанс TaskCalculation класса и передает его на исполнении в ForkJoinPool.
      */
     private void startCalculation() {
-        writeFile.saveDataCalculating(calculation);
+        serviceRecommenceCalculate.saveDataCalculating(calculation);
         TaskCalculation taskCalculation = new TaskCalculation(1, calculation.getNumber());
         forkJoinPool = new ForkJoinPool(calculation.getTreads());
         finishResult = forkJoinPool.invoke(taskCalculation);
@@ -74,7 +77,7 @@ public class CalculateFactorial implements Runnable {
         calculation.setResultCalculation(finishResult.toString());
         calculation.setStatusCalculation(ResponseEvent.StatusCalculation.FINISHED);
         calculationDaoImpl.updateCalculation(calculation);
-        writeFile.deleteDataCalculating(calculation.getUid());
+        serviceRecommenceCalculate.deleteDataCalculating(calculation.getUid());
         logger.info("вычисления с uid " + calculation.getUid() + " окончены");
     }
 

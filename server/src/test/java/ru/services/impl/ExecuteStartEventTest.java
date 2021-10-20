@@ -12,10 +12,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.RequestEvent;
 import ru.ResponseEvent;
-import ru.dao.impl.CalculationDaoImpl;
-import ru.domain.Calculation;
-import ru.file.WriteFile;
-import ru.util.UidGenerator;
+import ru.calculate.domain.Calculation;
+import ru.calculate.impl.CalculationDaoImpl;
+import ru.dao.dao_file.WriteFile;
+import ru.services.util.UidGenerator;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ExecuteStartEvent.class)

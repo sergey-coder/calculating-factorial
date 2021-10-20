@@ -1,6 +1,6 @@
 package ru.services.grpc;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import ru.RequestEvent;
 import ru.model.CalculatingRequest;
 import ru.model.TypeEvent;
@@ -8,7 +8,7 @@ import ru.model.TypeEvent;
 /**
  * Создает запрос к gRPC модулю по модели RequestEvent.
  */
-@Service
+@Component
 public class GrpcRequest {
 
     /**

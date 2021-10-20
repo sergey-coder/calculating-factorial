@@ -1,13 +1,22 @@
 version: "3"
 services:
-  pg_db:
+
+  client:
+    image: client
+    restart: on-failure
+    ports:
+      - 8080:8080
+
+  db:
     image: postgres
+    container_name: db
     restart: always
-    environment:
-      - POSTGRES_PASSWORD=selectel
-      - POSTGRES_USER=selectel
-      - POSTGRES_DB=selectel
     volumes:
-      - dataPostgresql
+      - dataPostgresql:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    env_file:
+      - database
+
+volumes:
+  dataPostgresql:

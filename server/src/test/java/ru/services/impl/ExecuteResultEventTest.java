@@ -10,8 +10,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.RequestEvent;
 import ru.ResponseEvent;
-import ru.dao.impl.CalculationDaoImpl;
-import ru.domain.Calculation;
+import ru.calculate.domain.Calculation;
+import ru.calculate.impl.CalculationDaoImpl;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ExecuteResultEvent.class)

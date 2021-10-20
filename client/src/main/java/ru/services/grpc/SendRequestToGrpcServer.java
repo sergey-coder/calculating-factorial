@@ -9,6 +9,8 @@ import ru.RequestEvent;
 import ru.ResponseEvent;
 import ru.ServerEndpointGrpc;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Отправляет запрос по протоколу gRPC на сервер.
  */
@@ -44,7 +46,11 @@ public class SendRequestToGrpcServer {
                 .build();
         ServerEndpointGrpc.ServerEndpointBlockingStub blockingStub = ServerEndpointGrpc.newBlockingStub(channel);
         ResponseEvent responseEvent = blockingStub.getEventCalculation(requestEvent);
-        channel.shutdown();
+        try {
+            channel.shutdown().awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return responseEvent;
     }
 

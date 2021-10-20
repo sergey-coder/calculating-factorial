@@ -10,7 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.RequestEvent;
 import ru.ResponseEvent;
-import ru.file.ReadFile;
+import ru.dao.dao_file.ReadFile;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ExecuteRecommenceEvent.class)

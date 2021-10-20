@@ -3,8 +3,8 @@ package ru.services.impl;
 import org.springframework.stereotype.Service;
 import ru.RequestEvent;
 import ru.ResponseEvent;
-import ru.dao.impl.CalculationDaoImpl;
-import ru.domain.Calculation;
+import ru.calculate.domain.Calculation;
+import ru.calculate.impl.CalculationDaoImpl;
 import ru.services.ExecuteEvent;
 
 /**
@@ -14,6 +14,11 @@ import ru.services.ExecuteEvent;
 public class ExecuteStatusEvent implements ExecuteEvent {
 
     private final CalculationDaoImpl calculationDaoImpl;
+
+    /**
+     * uid вычисления.
+     */
+    private String uid;
 
     public ExecuteStatusEvent(CalculationDaoImpl calculationDaoImpl) {
         this.calculationDaoImpl = calculationDaoImpl;
@@ -28,41 +33,54 @@ public class ExecuteStatusEvent implements ExecuteEvent {
      */
     @Override
     public ResponseEvent startEvent(RequestEvent request) {
-        String uid = request.getUid();
+        uid = request.getUid();
 
         if (!checkUid(uid)) {
-            return ResponseEvent.newBuilder()
-                    .setUid(uid)
-                    .setMessage("вычисление с данным uid не запущено")
-                    .build();
+            return createResponseEvent("вычисление с данным uid не запущено");
         }
-
         Calculation calculation = calculationDaoImpl.findByUid(uid);
-        String message;
 
+        return createResponseEvent(createMessage(calculation));
+    }
+
+
+    /**
+     * Формирует ответ для инициатора.
+     *
+     * @param message сообщение для инициатора.
+     * @return ответ по модели ResponseEvent.
+     */
+    private ResponseEvent createResponseEvent(String message) {
+        return ResponseEvent.newBuilder()
+                .setUid(uid)
+                .setMessage(message)
+                .build();
+    }
+
+    /**
+     * Формирует текст сообщения.
+     *
+     * @param calculation сохраненные данные о вычислении.
+     * @return сообщение для инициатора запроса.
+     */
+    private String createMessage(Calculation calculation) {
         switch (calculation.getStatusCalculation()) {
             case EXECUTING -> {
-                message = "Выполняется. Завершено потоков "
+                return "Выполняется. Завершено потоков "
                         + (calculation.getTreads() - calculation.getCalculateFactorial().getActiveThreadCount())
                         + " из " + calculation.getTreads();
             }
             case FINISHED -> {
-                message = "Завершено. Значение факториала " + calculation.getNumber() + " равно " + calculation.getResultCalculation();
+                return "Завершено. Значение факториала " + calculation.getNumber() + " равно " + calculation.getResultCalculation();
             }
 
             case STOPPED -> {
-                message = "Остановлено";
+                return "Остановлено";
             }
             default -> {
-                message = "Статус вычисления опредилить не удалось";
+                return "Статус вычисления опредилить не удалось";
             }
         }
-
-        return ResponseEvent.newBuilder()
-                .setUid(uid)
-                .setMessage(message)
-                .setResultCalculating(calculation.getResultCalculation())
-                .build();
     }
 
     /**

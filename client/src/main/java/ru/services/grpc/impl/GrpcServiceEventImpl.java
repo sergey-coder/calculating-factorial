@@ -17,11 +17,9 @@ import ru.services.grpc.SendRequestToGrpcServer;
 public class GrpcServiceEventImpl implements GrpcService {
 
     private final SendRequestToGrpcServer sendRequestToGrpcServer;
-    private final GrpcRequest grpcRequest;
 
-    public GrpcServiceEventImpl(SendRequestToGrpcServer sendRequestToGrpcServer, GrpcRequest grpcRequest) {
+    public GrpcServiceEventImpl(SendRequestToGrpcServer sendRequestToGrpcServer) {
         this.sendRequestToGrpcServer = sendRequestToGrpcServer;
-        this.grpcRequest = grpcRequest;
     }
 
     /**
@@ -35,7 +33,7 @@ public class GrpcServiceEventImpl implements GrpcService {
      */
     @Override
     public CalculatingRespons sendGrpcRequest(CalculatingRequest calculatingRequest) {
-        RequestEvent requestEvent = grpcRequest.createGrpcRequest(calculatingRequest);
+        RequestEvent requestEvent = new GrpcRequest().createGrpcRequest(calculatingRequest);
         ResponseEvent responseEvent = sendRequestToGrpcServer.sendRequestToServer(requestEvent);
         return toCalculatingRespons(responseEvent);
     }

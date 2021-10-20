@@ -3,8 +3,8 @@ package ru.services.impl;
 import org.springframework.stereotype.Service;
 import ru.RequestEvent;
 import ru.ResponseEvent;
-import ru.dao.impl.CalculationDaoImpl;
-import ru.domain.Calculation;
+import ru.calculate.domain.Calculation;
+import ru.calculate.impl.CalculationDaoImpl;
 import ru.services.ExecuteEvent;
 
 /**

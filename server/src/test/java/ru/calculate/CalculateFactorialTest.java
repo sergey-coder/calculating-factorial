@@ -6,9 +6,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import ru.ResponseEvent;
-import ru.dao.impl.CalculationDaoImpl;
-import ru.domain.Calculation;
-import ru.file.WriteFile;
+import ru.calculate.domain.Calculation;
+import ru.calculate.impl.CalculationDaoImpl;
+import ru.dao.dao_file.ServiceReadWriteFile;
 
 import java.math.BigInteger;
 import java.util.stream.Stream;
@@ -20,18 +20,18 @@ class CalculateFactorialTest {
      */
     @Test
     void startCalculationVerifyMethod() {
-        WriteFile writeFile = Mockito.mock(WriteFile.class);
         CalculationDaoImpl calculationDaoImpl = Mockito.mock(CalculationDaoImpl.class);
+        ServiceReadWriteFile serviceReadWriteFile = Mockito.mock(ServiceReadWriteFile.class);
 
         Calculation calculation = new Calculation();
         calculation.setUid("testUid");
         calculation.setTreads(40);
 
-        CalculateFactorial calculateFactorial = new CalculateFactorial(writeFile, calculationDaoImpl, calculation);
+        CalculateFactorial calculateFactorial = new CalculateFactorial(serviceReadWriteFile, calculationDaoImpl, calculation);
         calculateFactorial.run();
 
-        Mockito.verify(writeFile, Mockito.times(1)).saveDataCalculating(calculation);
-        Mockito.verify(writeFile, Mockito.times(1)).deleteDataCalculating(calculation.getUid());
+        Mockito.verify(serviceReadWriteFile, Mockito.times(1)).saveDataCalculating(calculation);
+        Mockito.verify(serviceReadWriteFile, Mockito.times(1)).deleteDataCalculating(calculation.getUid());
     }
 
     /**
@@ -42,15 +42,15 @@ class CalculateFactorialTest {
     @ParameterizedTest
     @MethodSource("testDataGenerator")
     void startCalculationCorrectResult(Integer testData) {
-        WriteFile writeFile = Mockito.mock(WriteFile.class);
         CalculationDaoImpl calculationDaoImpl = Mockito.mock(CalculationDaoImpl.class);
+        ServiceReadWriteFile serviceReadWriteFile = Mockito.mock(ServiceReadWriteFile.class);
 
         Calculation calculation = new Calculation();
         calculation.setUid("testUid");
         calculation.setTreads(10);
         calculation.setNumber(testData);
 
-        CalculateFactorial calculateFactorial = new CalculateFactorial(writeFile, calculationDaoImpl, calculation);
+        CalculateFactorial calculateFactorial = new CalculateFactorial(serviceReadWriteFile, calculationDaoImpl, calculation);
         calculateFactorial.run();
 
         BigInteger resultForComparison = BigInteger.ONE;
@@ -70,15 +70,15 @@ class CalculateFactorialTest {
      */
     @Test
     void saveResult() {
-        WriteFile writeFile = Mockito.mock(WriteFile.class);
         CalculationDaoImpl calculationDaoImpl = Mockito.mock(CalculationDaoImpl.class);
+        ServiceReadWriteFile serviceReadWriteFile = Mockito.mock(ServiceReadWriteFile.class);
 
         Calculation calculation = new Calculation();
         calculation.setUid("testUid");
         calculation.setTreads(10);
         calculation.setNumber(20);
 
-        CalculateFactorial calculateFactorial = new CalculateFactorial(writeFile, calculationDaoImpl, calculation);
+        CalculateFactorial calculateFactorial = new CalculateFactorial(serviceReadWriteFile, calculationDaoImpl, calculation);
         calculateFactorial.run();
 
         Assertions.assertEquals("2432902008176640000", calculation.getResultCalculation());

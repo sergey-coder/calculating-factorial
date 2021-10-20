@@ -1,5 +1,4 @@
+
 testUid,333,222
-testUid,333,222
-testUid,333,222
-testUid,333,222
-testUid,333,222
+ru.calculate.domain.Calculation@7915bca3
+
