@@ -10,10 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import ru.RequestEvent;
 import ru.ResponseEvent;
 import ru.calculate.domain.Calculation;
 import ru.calculate.impl.CalculationDaoImpl;
+import ru.dao.ServiceRecommenceCalculate;
+import ru.dao.dao_file.ServiceReadWriteFile;
 import ru.dao.dao_file.WriteFile;
 import ru.services.util.UidGenerator;
 
@@ -26,6 +29,9 @@ class ExecuteStartEventTest {
 
     @MockBean
     private WriteFile readFile;
+
+    @MockBean(ServiceReadWriteFile.class)
+    private ServiceRecommenceCalculate serviceRecommenceCalculateFile;
 
     @MockBean
     private CalculationDaoImpl calculationDaoImpl;

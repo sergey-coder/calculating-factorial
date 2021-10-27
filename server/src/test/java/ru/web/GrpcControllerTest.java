@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import ru.RequestEvent;
 import ru.ResponseEvent;
 import ru.services.EventSelection;
-import ru.services.impl.ExecuteStartEvent;
+import ru.services.impl.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = GrpcController.class)
@@ -30,13 +31,14 @@ class GrpcControllerTest {
      * Проверяем, вызывается ли, при поступлении запроса, метод selectEventProcess();
      */
     @Test
-    void processingCalculationResponse() {
+    void processingCalculationResponse() throws InterruptedException {
         RequestEvent request = RequestEvent.newBuilder()
                 .setTypeEvent(RequestEvent.TypeEvent.START).build();
         StreamRecorder<ResponseEvent> responseObserver = StreamRecorder.create();
+
         Mockito.when(eventSelection.selectEventProcess(RequestEvent.TypeEvent.START)).thenReturn(executeStartEvent);
         grpcController.getEventCalculation(request, responseObserver);
-
+        Thread.sleep(1000);
         Mockito.verify(eventSelection, Mockito.times(1)).selectEventProcess(RequestEvent.TypeEvent.START);
     }
 

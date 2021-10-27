@@ -4,12 +4,19 @@
    - gRPC протокол
    - ForkJoinPool
    - работа с файлами nio2
-   - реализация проблемы "reader writer problem" 
+   - реализация проблемы "reader writer problem"
+   - реализация взаимодействия с БД на уровне jdbcTemplate
     
 2. Текущий проект представляет собой root calculating-factorial с модулями:
     - client
     - server
     - grpc-api
+
+3. Сохранение служебных данных о вычислениях реализовано через общий интерфейс двумя пакетами модуля server:
+   - dao_file
+   - dao_jdbc
+   
+   Выбор класса реализующий данный интерфейс производится до запуска проекта через переменную server.typeRecommenceCaiculate в application.properties
 
 ## Модуль client:   
 1. Принимает по HTTP протоколу запросы:

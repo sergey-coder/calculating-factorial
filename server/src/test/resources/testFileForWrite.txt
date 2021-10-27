@@ -2,3 +2,43 @@
 testUid,333,222
 ru.calculate.domain.Calculation@7915bca3
 
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
+Calculation{uid='testUid', statusCalculation=null, resultCalculation='данных о результатах вычисления не имеется', number=333, treads=222, calculateFactorial=null}
